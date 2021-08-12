@@ -17,12 +17,12 @@ app.secret_key = os.environ.get("SECRET_KEY")
 
 mongo = PyMongo(app) # Constructor --> the "app" is the variable created above 
 
+
 @app.route("/")
 @app.route("/get_tasks")
 def get_tasks():
     tasks = mongo.db.tasks.find()
     return render_template("tasks.html", tasks=tasks)
-    
 
 
 if __name__ == "__main__":
