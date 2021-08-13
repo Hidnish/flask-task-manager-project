@@ -5,6 +5,7 @@ from flask import (
 from flask_pymongo import PyMongo  # different from when you insall it from  
                                    # command line (flask-pymongo, pymongo)
 from bson.objectid import ObjectId  # render object id in order to find documents from mongoDB later 
+from werkzeug.security import generate_password_hash, check_password_hash
 if os.path.exists("env.py"):
     import env
 
@@ -23,6 +24,11 @@ mongo = PyMongo(app) # Constructor --> the "app" is the variable created above
 def get_tasks():
     tasks = mongo.db.tasks.find()
     return render_template("tasks.html", tasks=tasks)
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    return render_template("register.html")
 
 
 if __name__ == "__main__":
