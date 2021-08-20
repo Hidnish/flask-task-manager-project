@@ -69,8 +69,7 @@ def login():
                 # invalid password match
                 flash("Incorrect Username and/or Password")
                 return redirect(url_for("login"))
-            
-        # username doesn't exist 
+        # username doesn't exist
         else:
             flash("Incorrect Username and/or Password")
         return redirect(url_for("login"))
@@ -82,9 +81,19 @@ def login():
 def profile(username):
     # grab the sessions user's username from the database
     username = mongo.db.users.find_one(
-        {"username": session["user"]})["username"] 
+        {"username": session["user"]})["username"]
     # ["username"] to specify we only want to grab that key field
-    return render_template("profile.html", username=username)
+    if session["user"]:
+        return render_template("profile.html", username=username)
+
+    return redirect(url_for("login"))
+
+@app.route("/logout")
+def logout():
+    # remove user from session cookie
+    flash("You have been logged out")
+    session.pop("user")
+    return redirect(url_for("login"))
 
 
 if __name__ == "__main__":
