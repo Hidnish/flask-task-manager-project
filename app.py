@@ -1,9 +1,13 @@
 import os
+# different from when you insall it from
 from flask import (
     Flask, flash, render_template,
-    redirect, request, session, url_for)  # different from when you insall it from  
-from flask_pymongo import PyMongo         # command line (flask-pymongo, pymongo)
-from bson.objectid import ObjectId        # render object id in order to find documents from mongoDB later 
+    redirect, request, session, url_for)
+# command line (flask-pymongo, pymongo)
+from flask_pymongo import PyMongo
+# render object_id in BSON format in order to find documents
+# and properly display between mongo and flask
+from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 if os.path.exists("env.py"):
     import env
@@ -169,6 +173,20 @@ def add_category():
         return redirect(url_for("get_categories"))
 
     return render_template("add_category.html")
+
+
+@app.route("/edit_category/<category_id>", methods=["GET", "POST"])
+def edit_category(category_id):
+    if request.method == "POST":
+        submit = {
+            "category_name": request.form.get("category_name")
+        }
+        mongo.db.categories.update({"_id": ObjectId(category_id)}, submit)
+        flash("Category Successfully Updated")
+        return redirect(url_for("get_categories"))
+
+    category = mongo.db.categories.find_one({"_id": ObjectId(category_id)})
+    return render_template("edit_category.html", category=category)
 
 
 if __name__ == "__main__":
